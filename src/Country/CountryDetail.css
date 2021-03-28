@@ -1,0 +1,12 @@
+.mainDiv {
+  margin: 5% 20% 0% 20%;
+}
+
+.mainDiv .flag {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+.mainDiv .flag .img {
+  width: 80px;
+}
