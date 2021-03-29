@@ -77,27 +77,17 @@ function CountryList() {
   return (
     <React.Fragment>
       {loading && <p className="loading">Carregando...</p>}
-      {!loading && <div >
-        {/* <p>País:<input type="text" className="form-control" onChange={(e) => setFilterName(e.target.value)} ></input></p> */}
-
-
+      {!loading && <div>
         <div className="divFilter">
           <Form.Group>
-
             <Form.Row>
-              <Form.Label column sm={2}>
-                Nome País:
-    </Form.Label>
+              <Form.Label column sm={2}>Nome País:</Form.Label>
               <Col>
                 <Form.Control type="text" placeholder="Filtrar por país (informar nome completo)" onChange={(e) => setFilterName(e.target.value)} />
               </Col>
             </Form.Row>
-
           </Form.Group>
         </div>
-
-
-
         <div className="list">
           {Flags}
         </div>
