@@ -6,13 +6,14 @@ import Button from 'react-bootstrap/Button';
 import '../Country/CountryDetail.css';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
+const { REACT_APP_ORIGINAL_URL, REACT_APP_EDIT_URL } = process.env;
 
 function CountryDetail(props) {
     const history = useHistory();
     const [country, setCountry] = useState({ id: '', name: '', capital: '', area: '', population: '', domain: '', flag: '' });
 
     useEffect(() => {
-        fetch('https://countries-274616.ew.r.appspot.com', {
+        fetch(REACT_APP_ORIGINAL_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -23,7 +24,7 @@ function CountryDetail(props) {
         })
             .then(resp => resp.json())
             .then(original => {
-                const url = 'http://localhost:56807/country/GetItem?id=' + props.location.state.id;
+                const url = REACT_APP_EDIT_URL + '/country/GetItem?id=' + props.location.state.id;
                 const options = { headers: { 'Authorization': 'Basic YWRtOjEyMw==', 'Content-Type': 'application/json' } };
                 axios.get(url, options)
                     .then(edited => {

@@ -6,6 +6,7 @@ import Button from 'react-bootstrap/Button';
 import '../Country/CountryEdit.css';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
+const { REACT_APP_ORIGINAL_URL, REACT_APP_EDIT_URL } = process.env;
 
 function CountryEdit(props) {
     const history = useHistory();
@@ -17,7 +18,7 @@ function CountryEdit(props) {
     const [density, setDensity] = useState(0);
 
     useEffect(() => {
-        fetch('https://countries-274616.ew.r.appspot.com', {
+        fetch(REACT_APP_ORIGINAL_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -28,8 +29,8 @@ function CountryEdit(props) {
         })
             .then(resp => resp.json())
             .then(original => {
-                const url = 'http://localhost:56807/country/GetItem?id=' + props.location.state.id;
-                const options = { headers: { 'Authorization': 'Basic dGVzdDp0ZXN0', 'Content-Type': 'application/json' } };
+                const url = REACT_APP_EDIT_URL + '/country/GetItem?id=' + props.location.state.id;
+                const options = { headers: { 'Authorization': 'Basic YWRtOjEyMw==', 'Content-Type': 'application/json' } };
                 axios.get(url, options)
                     .then(edited => {
                         const countryOriginal = original.data.Country[0];
@@ -48,7 +49,7 @@ function CountryEdit(props) {
 
     const SaveHandler = (e) => {
         e.preventDefault();
-        const url = 'http://localhost:56807/country/save';
+        const url = REACT_APP_EDIT_URL + '/country/save';
         const data = { id: parseInt(props.location.state.id), capital: capital, area: parseInt(area), population: parseInt(population), density: parseFloat(density) };
         const options = {
             headers: { 'Authorization': 'Basic YWRtOjEyMw==', 'Content-Type': 'application/json' }
