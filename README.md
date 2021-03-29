@@ -23,5 +23,5 @@ Ambiente de desenvolvimento:
 Executar a aplicação:
 
 - Para executar a aplicação, abrir a pasta no Visual Studio Code.
-- Caso deseje rodar o backend localmene, alterar o endpoint no arquivo .env.
+- Caso deseje rodar o backend localmente, alterar o endpoint no arquivo .env, chave REACT_APP_EDIT_URL.
 - Executar o comando 'npm start'. Necessário ter o NodeJs instalado.
