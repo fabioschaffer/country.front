@@ -2,12 +2,16 @@ import React, { useState, useEffect } from 'react';
 import '../Country/CountryList.css';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
+import Form from 'react-bootstrap/Form';
+import Col from 'react-bootstrap/Col';
+
 const { REACT_APP_ORIGINAL_URL, REACT_APP_EDIT_URL } = process.env;
 
 function CountryList() {
   const history = useHistory();
   const [list, setList] = useState([]);
   const [filterName, setFilterName] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const filter = filterName === '' ? '' : '(name: "' + filterName + '")';
@@ -42,6 +46,7 @@ function CountryList() {
               return false;
             });
             setList(items);
+            setLoading(false);
           })
           .catch(error => {
             alert(error);
@@ -72,10 +77,33 @@ function CountryList() {
 
   return (
     <React.Fragment>
-      <p>País:<input onChange={(e) => setFilterName(e.target.value)} ></input></p>
-      <div className="list">
-        {Flags}
+      {loading && <p className="loading">Carregando...</p>}
+      {!loading && <div >
+        {/* <p>País:<input type="text" className="form-control" onChange={(e) => setFilterName(e.target.value)} ></input></p> */}
+
+
+        <div className="divFilter">
+          <Form.Group>
+
+            <Form.Row>
+              <Form.Label column sm={2}>
+                Nome País:
+    </Form.Label>
+              <Col>
+                <Form.Control type="text" placeholder="Filtrar por país (informar nome completo)" onChange={(e) => setFilterName(e.target.value)} />
+              </Col>
+            </Form.Row>
+
+          </Form.Group>
+        </div>
+
+
+
+        <div className="list">
+          {Flags}
+        </div>
       </div>
+      }
     </React.Fragment>
   );
 }
