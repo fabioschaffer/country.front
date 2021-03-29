@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/Button';
 import '../Country/CountryDetail.css';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-const { REACT_APP_ORIGINAL_URL, REACT_APP_EDIT_URL } = process.env;
+const { REACT_APP_ORIGINAL_URL, REACT_APP_EDIT_URL, REACT_APP_AUTH_KEY } = process.env;
 
 function CountryDetail(props) {
     const history = useHistory();
@@ -25,7 +25,7 @@ function CountryDetail(props) {
             .then(resp => resp.json())
             .then(original => {
                 const url = REACT_APP_EDIT_URL + '/country/GetItem?id=' + props.location.state.id;
-                const options = { headers: { 'Authorization': 'Basic YWRtOjEyMw==', 'Content-Type': 'application/json' } };
+                const options = { headers: { 'Authorization': 'Basic ' + REACT_APP_AUTH_KEY, 'Content-Type': 'application/json' } };
                 axios.get(url, options)
                     .then(edited => {
                         const countryOriginal = original.data.Country[0];

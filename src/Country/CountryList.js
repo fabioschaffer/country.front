@@ -4,8 +4,7 @@ import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
-
-const { REACT_APP_ORIGINAL_URL, REACT_APP_EDIT_URL } = process.env;
+const { REACT_APP_ORIGINAL_URL, REACT_APP_EDIT_URL, REACT_APP_AUTH_KEY } = process.env;
 
 function CountryList() {
   const history = useHistory();
@@ -30,7 +29,7 @@ function CountryList() {
       .then(r => r.json())
       .then(initial => {
         const url = REACT_APP_EDIT_URL + '/country/GetAll';
-        const options = { headers: { 'Authorization': 'Basic YWRtOjEyMw==', 'Content-Type': 'application/json' } };
+        const options = { headers: { 'Authorization': 'Basic ' + REACT_APP_AUTH_KEY, 'Content-Type': 'application/json' } };
         axios.get(url, options)
           .then(edited => {
             const items = [];
