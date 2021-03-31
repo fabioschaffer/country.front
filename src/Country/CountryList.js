@@ -1,19 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import '../Country/CountryList.css';
+import CountryPag from "./CountryPag";
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
-const { REACT_APP_ORIGINAL_URL, REACT_APP_EDIT_URL, REACT_APP_AUTH_KEY } = process.env;
 
 function CountryList() {
   const history = useHistory();
   const [list, setList] = useState([]);
   const [filterName, setFilterName] = useState('');
   const [loading, setLoading] = useState(true);
+  const [pagesNumber, setPagesNumber] = useState();
+  const { REACT_APP_ORIGINAL_URL, REACT_APP_EDIT_URL, REACT_APP_AUTH_KEY, REACT_APP_FLAGS_PER_PAGE } = process.env;
 
   useEffect(() => {
+    LoadTotalRows();
+  }, [filterName]);
+
+  const LoadTotalRows = () => {
     const filter = filterName === '' ? '' : '(name: "' + filterName + '")';
+    fetch(REACT_APP_ORIGINAL_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: `query { Country ${filter} { _id }}` }),
+    }).then(resp => resp.json()).then(original => {
+      const lenght = parseInt(original.data.Country.length);
+      setPagesNumber(lenght / REACT_APP_FLAGS_PER_PAGE);
+      LoadList(1);
+    });
+  }
+
+  const LoadList = (currentPage) => {
+    let filter = '(orderBy: name_asc, offset: ' + ((parseInt(currentPage) - 1) * parseInt(REACT_APP_FLAGS_PER_PAGE)) + ', first: ' + REACT_APP_FLAGS_PER_PAGE;
+    filter = filter + (filterName === '' ? '' : ', name: "' + filterName + '"');
+    filter = filter + ')';
     const query = `
     query  {
       Country ${filter} {
@@ -51,7 +72,7 @@ function CountryList() {
             alert(error);
           });
       });
-  }, [filterName]);
+  };
 
   function EditHandler(id) {
     history.push('/edit', { id: id });
@@ -61,7 +82,11 @@ function CountryList() {
     history.push('/detail', { id: id });
   }
 
-  const Flags = list.map(i => {
+  const Paging = (page) => {
+    LoadList(page);
+  }
+
+  const Cards = list.map(i => {
     return <div className="card" key={i.id}>
       <p><img className="flag" src={i.flag} alt=" "></img></p>
       <p className="name">{i.name}</p>
@@ -89,7 +114,10 @@ function CountryList() {
           </Form.Group>
         </div>
         <div className="list">
-          {Flags}
+          {Cards}
+        </div>
+        <div>
+          <CountryPag Paging={Paging} PagesNumber={pagesNumber}></CountryPag>
         </div>
       </div>
       }
