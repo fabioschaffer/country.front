@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import '../Country/CountryDetail.css';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import '../Country/CountryDetail.css';
-import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-const { REACT_APP_ORIGINAL_URL, REACT_APP_EDIT_URL, REACT_APP_AUTH_KEY } = process.env;
 
 function CountryDetail(props) {
     const history = useHistory();
     const [country, setCountry] = useState({ id: '', name: '', capital: '', area: '', population: '', domain: '', flag: '' });
+    const { REACT_APP_ORIGINAL_URL, REACT_APP_EDIT_URL, REACT_APP_AUTH_KEY } = process.env;
 
     useEffect(() => {
         fetch(REACT_APP_ORIGINAL_URL, {
@@ -19,8 +19,7 @@ function CountryDetail(props) {
             body: JSON.stringify({
                 query: `query { Country(_id: "${props.location.state.id}") {
                                 _id name capital area population topLevelDomains { name } flag { svgFile }
-                        }}
-          ` }),
+                        }}` }),
         })
             .then(resp => resp.json())
             .then(original => {

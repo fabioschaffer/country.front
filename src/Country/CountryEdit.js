@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import '../Country/CountryEdit.css';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import '../Country/CountryEdit.css';
-import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-const { REACT_APP_ORIGINAL_URL, REACT_APP_EDIT_URL, REACT_APP_AUTH_KEY } = process.env;
 
 function CountryEdit(props) {
     const history = useHistory();
@@ -16,18 +15,21 @@ function CountryEdit(props) {
     const [area, setArea] = useState('');
     const [population, setPopulation] = useState('');
     const [density, setDensity] = useState(0);
+    const { REACT_APP_ORIGINAL_URL, REACT_APP_EDIT_URL, REACT_APP_AUTH_KEY } = process.env;
 
     useEffect(() => {
+        Load();
+    }, [props.location.state.id]);
+
+    const Load = () => {
         fetch(REACT_APP_ORIGINAL_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 query: `query { Country(_id: "${props.location.state.id}") {
                                 _id name capital area population topLevelDomains { name } flag { svgFile } populationDensity
-                        }}
-          ` }),
-        })
-            .then(resp => resp.json())
+                        }}` })
+        }).then(resp => resp.json())
             .then(original => {
                 const url = REACT_APP_EDIT_URL + '/country/GetItem?id=' + props.location.state.id;
                 const options = { headers: { 'Authorization': 'Basic ' + REACT_APP_AUTH_KEY, 'Content-Type': 'application/json' } };
@@ -42,29 +44,24 @@ function CountryEdit(props) {
                         setArea(ed ? countryEdited.area : countryOriginal.area);
                         setPopulation(ed ? countryEdited.population : countryOriginal.population);
                         setDensity(ed ? countryEdited.density : countryOriginal.populationDensity);
-                    })
-                    .catch(error => { alert(error); });
+                    }).catch(error => { alert(error); });
             });
-    }, [props.location.state.id]);
+    }
 
-    const SaveHandler = (e) => {
-        e.preventDefault();
+    const SaveHandler = () => {
         const url = REACT_APP_EDIT_URL + '/country/save';
         const data = { id: parseInt(props.location.state.id), capital: capital, area: parseInt(area), population: parseInt(population), density: parseFloat(density) };
         const options = {
             headers: { 'Authorization': 'Basic ' + REACT_APP_AUTH_KEY, 'Content-Type': 'application/json' }
         };
         axios.post(url, data, options)
-            .then(resp => {
+            .then(() => {
                 alert('Dados salvos com sucesso.');
                 history.push('/');
-            })
-            .catch(error => {
-                alert(error);
-            });
+            }).catch(error => { alert(error); });
     };
 
-    function BackHandler() {
+    const BackHandler = () => {
         history.push('/');
     }
 
@@ -96,7 +93,7 @@ function CountryEdit(props) {
                     <Form.Group as={Row}>
                         <Col sm={{ span: 10, offset: 2 }}>
                             <Button onClick={SaveHandler}>Salvar</Button> {' '}
-                            <Button onClick={() => BackHandler()}>Voltar</Button>
+                            <Button onClick={BackHandler}>Voltar</Button>
                         </Col>
                     </Form.Group>
                 </Form>

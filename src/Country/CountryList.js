@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import '../Country/CountryList.css';
 import CountryPag from "./CountryPag";
-import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
@@ -32,53 +32,47 @@ function CountryList() {
   }
 
   const LoadList = (currentPage) => {
-    let filter = '(orderBy: name_asc, offset: ' + ((parseInt(currentPage) - 1) * parseInt(REACT_APP_FLAGS_PER_PAGE)) + ', first: ' + REACT_APP_FLAGS_PER_PAGE;
-    filter = filter + (filterName === '' ? '' : ', name: "' + filterName + '"');
-    filter = filter + ')';
-    const query = `
-    query  {
+    let filter = '(offset: ' + ((parseInt(currentPage) - 1) * parseInt(REACT_APP_FLAGS_PER_PAGE)) + ', ' +
+      'first: ' + REACT_APP_FLAGS_PER_PAGE + ', ' +
+      (filterName === '' ? '' : 'name: "' + filterName + '", ') +
+      'orderBy: name_asc)';
+    const query = `query  {
       Country ${filter} {
         _id name capital flag { svgFile }
-      }
-    }
-    `;
+      }}`;
     fetch(REACT_APP_ORIGINAL_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query: query }),
-    })
-      .then(r => r.json())
-      .then(initial => {
+    }).then(r => r.json())
+      .then(RespInitial => {
         const url = REACT_APP_EDIT_URL + '/country/GetAll';
         const options = { headers: { 'Authorization': 'Basic ' + REACT_APP_AUTH_KEY, 'Content-Type': 'application/json' } };
-        axios.get(url, options)
-          .then(edited => {
-            const items = [];
-            initial.data.Country.map((original) => {
-              const ed = edited.data.find(e => e.id == original._id);
-              items.push({
-                id: original._id,
-                name: original.name,
-                capital: ed === undefined ? original.capital : ed.capital,
-                flag: original.flag.svgFile,
-                edited: ed === undefined ? 0 : 1
-              });
-              return false;
+        axios.get(url, options).then(RespEdited => {
+          const items = [];
+          RespInitial.data.Country.map((countryOriginal) => {
+            const countryEdited = RespEdited.data.find(e => e.id == countryOriginal._id);
+            const edited = countryEdited !== undefined;
+            items.push({
+              id: countryOriginal._id,
+              name: countryOriginal.name,
+              capital: edited ? countryEdited.capital : countryOriginal.capital,
+              flag: countryOriginal.flag.svgFile,
+              edited: edited
             });
-            setList(items);
-            setLoading(false);
-          })
-          .catch(error => {
-            alert(error);
+            return false;
           });
+          setList(items);
+          setLoading(false);
+        }).catch(error => { alert(error); });
       });
   };
 
-  function EditHandler(id) {
+  const Edit = (id) => {
     history.push('/edit', { id: id });
   }
 
-  function DetailHandler(id) {
+  const Detail = (id) => {
     history.push('/detail', { id: id });
   }
 
@@ -92,10 +86,10 @@ function CountryList() {
       <p className="name">{i.name}</p>
       <p>({i.capital})</p>
       <p className="action">
-        <button className="btn btn-link btn-sm" onClick={() => EditHandler(i.id)}> Editar</button>
-        <button className="btn btn-link btn-sm" onClick={() => DetailHandler(i.id)}>Detalhes</button>
+        <button className="btn btn-link btn-sm" onClick={() => Edit(i.id)}> Editar</button>
+        <button className="btn btn-link btn-sm" onClick={() => Detail(i.id)}>Detalhes</button>
       </p>
-      {i.edited === 1 ? <p>Editado</p> : null}
+      {i.edited ? <p>Editado</p> : null}
     </div>;
   });
 
