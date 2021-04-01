@@ -31,7 +31,7 @@ function CountryEdit(props) {
                         }}` })
         }).then(resp => resp.json())
             .then(original => {
-                const url = REACT_APP_EDIT_URL + '/country/GetItem?id=' + props.location.state.id;
+                const url = REACT_APP_EDIT_URL + '/Country/GetItem?id=' + props.location.state.id;
                 const options = { headers: { 'Authorization': 'Basic ' + REACT_APP_AUTH_KEY, 'Content-Type': 'application/json' } };
                 axios.get(url, options)
                     .then(edited => {
@@ -49,7 +49,7 @@ function CountryEdit(props) {
     }
 
     const SaveHandler = () => {
-        const url = REACT_APP_EDIT_URL + '/country/save';
+        const url = REACT_APP_EDIT_URL + '/Country/Save';
         const data = { id: parseInt(props.location.state.id), capital: capital, area: parseInt(area), population: parseInt(population), density: parseFloat(density) };
         const options = {
             headers: { 'Authorization': 'Basic ' + REACT_APP_AUTH_KEY, 'Content-Type': 'application/json' }

@@ -46,7 +46,7 @@ function CountryList() {
       body: JSON.stringify({ query: query }),
     }).then(r => r.json())
       .then(RespInitial => {
-        const url = REACT_APP_EDIT_URL + '/country/GetAll';
+        const url = REACT_APP_EDIT_URL + '/Country/GetAll';
         const options = { headers: { 'Authorization': 'Basic ' + REACT_APP_AUTH_KEY, 'Content-Type': 'application/json' } };
         axios.get(url, options).then(RespEdited => {
           const items = [];

@@ -23,7 +23,7 @@ function CountryDetail(props) {
         })
             .then(resp => resp.json())
             .then(original => {
-                const url = REACT_APP_EDIT_URL + '/country/GetItem?id=' + props.location.state.id;
+                const url = REACT_APP_EDIT_URL + '/Country/GetItem?id=' + props.location.state.id;
                 const options = { headers: { 'Authorization': 'Basic ' + REACT_APP_AUTH_KEY, 'Content-Type': 'application/json' } };
                 axios.get(url, options)
                     .then(edited => {
